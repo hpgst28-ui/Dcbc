@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DCBC - Dev Chhaya Badminton Club Rules</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --court-green: #0a4d2e;
+      --court-deep: #06311e;
+      --court-surface: #0e5c37;
+      --court-line: rgba(255, 255, 255, 0.85);
+      --court-line-faint: rgba(255, 255, 255, 0.25);
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --text-main: #f0fdf4;
+      --text-muted: #bbf7d0;
+      --card-bg: rgba(6, 49, 30, 0.82);
+      --card-border: rgba(255, 255, 255, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--court-deep);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Badminton Court Floor Grid Styling */
+    .court-background {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 20%, #11683f 0%, var(--court-deep) 85%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .court-grid {
+      position: absolute;
+      inset: 20px;
+      border: 3px solid var(--court-line);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .court-grid::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 6%;
+      right: 6%;
+      border-left: 2px solid var(--court-line-faint);
+      border-right: 2px solid var(--court-line-faint);
+    }
+
+    .court-center-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--court-line);
+      transform: translateY(-50%);
+    }
+
+    /* Huge DCBC Watermark */
+    .watermark-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .watermark-acronym {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: clamp(6rem, 24vw, 22rem);
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.04);
+      letter-spacing: 0.08em;
+      line-height: 0.9;
+      text-transform: uppercase;
+    }
+
+    .watermark-sub {
+      font-size: clamp(0.9rem, 2.2vw, 1.8rem);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.035);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* Main Container */
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 44px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--gold-light);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Rules Grid */
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .rule-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .rule-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(10, 68, 42, 0.9);
+    }
+
+    .rule-num {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
+
+    .rule-content {
+      flex: 1;
+      font-size: 1.05rem;
+      color: var(--text-main);
+      padding-top: 8px;
+    }
+
+    .rule-content strong {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .highlight-clause {
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+
+    /* Tribute / Shout-out Banner */
+    .shoutout-card {
+      margin-top: 48px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.08));
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 18px;
+      padding: 30px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .shoutout-icon {
+      flex-shrink: 0;
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: var(--gold);
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .shoutout-text h2 {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .shoutout-text p {
+      font-size: 1.1rem;
+      color: #ffffff;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    @media (max-width: 640px) {
+      .wrapper {
+        padding: 24px 16px 60px;
+      }
+      .rule-card {
+        padding: 16px;
+        gap: 14px;
+      }
+      .rule-num {
+        width: 36px;
+        height: 36px;
+        font-size: 1.05rem;
+      }
+      .rule-content {
+        font-size: 0.95rem;
+        padding-top: 5px;
+      }
+      .shoutout-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Court Background & Watermark Layer -->
+  <div class="court-background">
+    <div class="court-grid">
+      <div class="court-center-line"></div>
+    </div>
+  </div>
+
+  <div class="watermark-container">
+    <div class="watermark-acronym">DCBC</div>
+    <div class="watermark-sub">Dev Chhaya Badminton Club</div>
+  </div>
+
+  <!-- Content Layer -->
+  <div class="wrapper">
+    <header>
+      <div class="badge">🏸 Official Code of Play</div>
+      <h1>Dev Chhaya Badminton Club</h1>
+      <p class="subtitle">General club rules, match protocols, and court etiquette</p>
+    </header>
+
+    <main class="rules-list">
+      <article class="rule-card">
+        <div class="rule-num">1</div>
+        <div class="rule-content">
+          For being the member of the club one needs to pay the <strong>nominal membership fees</strong> whenever demanded by the committee.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">2</div>
+        <div class="rule-content">
+          In case of any fight among the members, the membership fees <span class="highlight-clause">will not be refunded under any circumstances</span>.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">3</div>
+        <div class="rule-content">
+          <strong>In/Out</strong> will be counted as per the spectators without requiring any appeal and will be a <strong>binding decision</strong>.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">4</div>
+        <div class="rule-content">
+          <strong>Cut / Double / Net service</strong> should be appealed.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">5</div>
+        <div class="rule-content">
+          Service should cross the short service line. (<span class="highlight-clause">On the line will be foul in service</span>).
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">6</div>
+        <div class="rule-content">
+          Every match should be of <strong>7 points each</strong>. If any members playing 11 points games will be mandated to continue till 7 points on request of any other member playing.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">7</div>
+        <div class="rule-content">
+          Every member should wait for his turn to play. However, he can break the queue if the next team is inattentive.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">8</div>
+        <div class="rule-content">
+          A member will have to wait for the present round to get complete if he comes late to play.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">9</div>
+        <div class="rule-content">
+          A team can only be changed if <strong>ALL the members</strong> of both the teams agree.
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <div class="rule-num">10</div>
+        <div class="rule-content">
+          Members should avoid mobile phones while playing. <em>(Can be used for genuine cases)</em>.
+        </div>
+      </article>
+    </main>
+
+    <!-- Logistics Shout-Out -->
+    <aside class="shoutout-card">
+      <div class="shoutout-icon">👏</div>
+      <div class="shoutout-text">
+        <h2>Club Appreciation</h2>
+        <p>Big shout-out to <strong>Pooja Jain</strong>, our official logistics manager, for bringing the racquets and the nets daily!</p>
+      </div>
+    </aside>
+
+    <footer>
+      &copy; Dev Chhaya Badminton Club (DCBC) &bull; Fair Play &amp; Sportsmanship
+    </footer>
+  </div>
+
+</body>
+</html>
